@@ -1,13 +1,14 @@
 # EC2
-resource "aws_instance" "ec2-db_fastlog" {
+resource "aws_instance" "ec2-postgres_fastlog" {
   ami           = "ami-084568db4383264d4"
   instance_type = "t2.micro"
+  key_name      = "key-michael-kaiser"
+
+  user_data = file("scripts/script.sh")
 
   tags = {
-    Name        = "db-prod_fastlog"
+    Name        = "postgres_fastlog"
     Product     = "fastlog"
     Environment = "prod"
   }
-
-  key_name = "key-mick-jagger"
 }

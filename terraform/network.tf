@@ -43,3 +43,36 @@ resource "aws_subnet" "public-fastlog-east_1b" {
     Environment = "prod"
   }
 }
+
+resource "aws_internet_gateway" "igw-fastlog" {
+  vpc_id = aws_vpc.vpc-fastlog.id
+
+  tags = {
+    Name        = "igw-fastlog"
+    Product     = "fastlog"
+    Environment = "prod"
+  }
+}
+
+resource "aws_route_table" "rtb-public" {
+  vpc_id = aws_vpc.vpc-fastlog.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw-fastlog.id
+  }
+
+  tags = {
+    Name = "rtb-public"
+  }
+}
+
+resource "aws_route_table_association" "rta-public-1a" {
+  subnet_id      = aws_subnet.public-fastlog-east_1a.id
+  route_table_id = aws_route_table.rtb-public.id
+}
+
+resource "aws_route_table_association" "rta-public-1b" {
+  subnet_id      = aws_subnet.public-fastlog-east_1b.id
+  route_table_id = aws_route_table.rtb-public.id
+}

@@ -1,12 +1,12 @@
 # S3 Bucket
-resource "aws_s3_bucket" "upload_bucket" {
-  bucket = "fastlog-upload-bucket"
+resource "aws_s3_bucket" "s3-original" {
+  bucket = "fastlog-original-bucket"
 }
 
-resource "aws_s3_bucket" "resized_bucket" {
-  bucket = "fastlog-resized-bucket"
+resource "aws_s3_bucket" "s3-tratada" {
+  bucket = "fastlog-tratada-bucket"
 }
 
-resource "aws_s3_bucket" "processed_bucket" {
-  bucket = "fastlog-processed-bucket"
+resource "aws_s3_bucket" "s3-reconhecida" {
+  bucket = "fastlog-reconhecida-bucket"
 }

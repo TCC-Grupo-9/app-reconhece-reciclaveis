@@ -1,3 +1,3 @@
-output "alb_dns_name" {    
-  value = aws_lb.fastlog_alb.dns_name
+output "alb-dns_name" {    
+  value = aws_lb.lb-fastlog.dns_name
 }

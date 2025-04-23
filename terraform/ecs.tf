@@ -21,6 +21,7 @@ resource "aws_ecs_task_definition" "task-api_reconhecimento" {
   network_mode             = "awsvpc"
   cpu                      = "512"
   memory                   = "1024"
+  depends_on = [ aws_instance.ec2-postgres_fastlog ]
 
   container_definitions = jsonencode([
     {

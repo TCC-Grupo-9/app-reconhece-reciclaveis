@@ -1,4 +1,4 @@
-resource "aws_iam_role" "lambda_exec_role" {
+resource "aws_iam_role" "lambda-exec_role" {
   name = "lambda_s3_exec_role"
 
   assume_role_policy = jsonencode({
@@ -13,30 +13,30 @@ resource "aws_iam_role" "lambda_exec_role" {
   })
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attach" {
-  role       = aws_iam_role.lambda_exec_role.name
+resource "aws_iam_role_policy_attachment" "lambda-s3_policy_attach" {
+  role       = aws_iam_role.lambda-exec_role.name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
-resource "aws_lambda_function" "resize_image" {
-  function_name = "resize_image"
+resource "aws_lambda_function" "lambda-tratar_imagem" {
+  function_name = "tratar_imagem"
   runtime       = "python3.11"
   handler       = "lambda_function.lambda_handler"
-  role          = aws_iam_role.lambda_exec_role.arn
-  filename      = "lambda_resize_image.zip"
+  role          = aws_iam_role.lambda-exec_role.arn
+  filename      = "tratar_imagem.zip"
 
   environment {
     variables = {
-      OUTPUT_BUCKET = aws_s3_bucket.resized_bucket.bucket
+      OUTPUT_BUCKET = aws_s3_bucket.s3-tratada.bucket
     }
   }
 }
 
-resource "aws_s3_bucket_notification" "upload_image_notification" {
-  bucket = aws_s3_bucket.upload_bucket.id
+resource "aws_s3_bucket_notification" "lambda-upload_image_notification" {
+  bucket = aws_s3_bucket.s3-original.id
 
   lambda_function {
-    lambda_function_arn = aws_lambda_function.resize_image.arn
+    lambda_function_arn = aws_lambda_function.lambda-tratar_imagem.arn
     events              = ["s3:ObjectCreated:*"]
   }
 
@@ -48,7 +48,15 @@ resource "aws_s3_bucket_notification" "upload_image_notification" {
 resource "aws_lambda_permission" "allow_s3" {
   statement_id  = "AllowS3Invoke"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.resize_image.function_name
+  function_name = aws_lambda_function.lambda-tratar_imagem.function_name
   principal     = "s3.amazonaws.com"
-  source_arn    = aws_s3_bucket.upload_bucket.arn
+  source_arn    = aws_s3_bucket.s3-original.arn
+}
+
+resource "aws_lambda_permission" "allow_s3_invoke" {
+  statement_id  = "AllowExecutionFromS3"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.lambda-tratar_imagem.function_name
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.s3-reconhecida.arn
 }
