@@ -1,0 +1,9 @@
+/.venv
+/__pycache__
+/datasets
+/nao-usadas
+
+*.cache
+*.zip
+
+yolo11n.pt
