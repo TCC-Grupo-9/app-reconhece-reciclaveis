@@ -2,10 +2,12 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+*.zip
 
 ### TERRAFORM ###
 .terraform/
 .terraform.lock.hcl
+/terraform.tfvars
 *.pem
 
 ### STS ###
@@ -38,3 +40,5 @@ build/
 
 ### SQL
 *.mwb.bak
+terraform/terraform.tfvars
+terraform/terraform.tfvars

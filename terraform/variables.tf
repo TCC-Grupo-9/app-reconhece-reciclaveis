@@ -22,3 +22,9 @@ variable "REGION" {
   nullable = false
   sensitive = false
 }
+
+variable "ACCOUNT_ID" {
+  type = string
+  nullable = false
+  sensitive = true
+}

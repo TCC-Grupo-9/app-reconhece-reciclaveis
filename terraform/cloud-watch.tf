@@ -4,7 +4,7 @@ resource "aws_cloudwatch_log_group" "log_group_api" {
   retention_in_days = 7
   tags = {
     Name        = "log-group-api_reconhecimento"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
@@ -21,12 +21,12 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high_api" {
   threshold           = 80
   alarm_description   = "Alerta quando a utilização de CPU exceder 80%."
   dimensions = {
-    ClusterName = aws_ecs_cluster.fastlog_reconhecimento.name
+    ClusterName = aws_ecs_cluster.tcc_reconhecimento.name
     ServiceName = aws_ecs_service.service-api_reconhecimento.name
   }
   tags = {
     Name        = "cpu-high-api"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
@@ -42,12 +42,12 @@ resource "aws_cloudwatch_metric_alarm" "memory_high_api" {
   threshold           = 80
   alarm_description   = "Alerta quando a utilização de memória exceder 80%."
   dimensions = {
-    ClusterName = aws_ecs_cluster.fastlog_reconhecimento.name
+    ClusterName = aws_ecs_cluster.tcc_reconhecimento.name
     ServiceName = aws_ecs_service.service-api_reconhecimento.name
   }
   tags = {
     Name        = "memory-high-api"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
@@ -64,12 +64,12 @@ resource "aws_cloudwatch_metric_alarm" "running_task_count" {
   threshold           = 1
   alarm_description   = "Alerta quando o número de tarefas em execução for menor que 1."
   dimensions = {
-    ClusterName = aws_ecs_cluster.fastlog_reconhecimento.name
+    ClusterName = aws_ecs_cluster.tcc_reconhecimento.name
     ServiceName = aws_ecs_service.service-api_reconhecimento.name
   }
   tags = {
     Name        = "low-task-count"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }

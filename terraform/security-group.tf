@@ -1,6 +1,6 @@
 resource "aws_security_group" "conexao_backend" {
   name_prefix = "conexao_backend"
-  vpc_id = aws_vpc.vpc-fastlog.id
+  vpc_id = aws_vpc.vpc-tcc.id
 
   ingress {
     from_port   = 22
@@ -25,7 +25,7 @@ resource "aws_security_group" "conexao_backend" {
   
   tags = {
     Name = "sg-conexao_backend"
-    Product = "fastlog"
+    Product = "tcc"
     Environment = "prod"
   }
 }

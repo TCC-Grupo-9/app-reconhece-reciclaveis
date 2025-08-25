@@ -1,6 +1,6 @@
 # Clusters
-resource "aws_ecs_cluster" "fastlog_reconhecimento" {
-  name = "fastlog_reconhecimento"
+resource "aws_ecs_cluster" "tcc_reconhecimento" {
+  name = "tcc_reconhecimento"
 
   setting {
     name  = "containerInsights"
@@ -8,8 +8,8 @@ resource "aws_ecs_cluster" "fastlog_reconhecimento" {
   }
 
   tags = {
-    Name        = "ecs-fastlog_reconhecimento"
-    Product     = "fastlog"
+    Name        = "ecs-tcc_reconhecimento"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
@@ -21,7 +21,6 @@ resource "aws_ecs_task_definition" "task-api_reconhecimento" {
   network_mode             = "awsvpc"
   cpu                      = "512"
   memory                   = "1024"
-  depends_on = [ aws_instance.ec2-postgres_fastlog ]
 
   container_definitions = jsonencode([
     {
@@ -43,7 +42,7 @@ resource "aws_ecs_task_definition" "task-api_reconhecimento" {
 
   tags = {
     Name        = "task-api_reconhecimento"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
@@ -51,15 +50,15 @@ resource "aws_ecs_task_definition" "task-api_reconhecimento" {
 # Services
 resource "aws_ecs_service" "service-api_reconhecimento" {
   name            = "api_reconhecimento"
-  cluster         = aws_ecs_cluster.fastlog_reconhecimento.id
+  cluster         = aws_ecs_cluster.tcc_reconhecimento.id
   task_definition = aws_ecs_task_definition.task-api_reconhecimento.arn
   desired_count   = 2
   launch_type     = "FARGATE"
 
   network_configuration {
     subnets = [
-      aws_subnet.public-fastlog-east_1a.id,
-      aws_subnet.public-fastlog-east_1a.id
+      aws_subnet.public-tcc-east_1a.id,
+      aws_subnet.public-tcc-east_1a.id
     ]
     security_groups  = [aws_security_group.conexao_backend.id]
     assign_public_ip = false
@@ -67,7 +66,7 @@ resource "aws_ecs_service" "service-api_reconhecimento" {
 
   tags = {
     Name        = "service-api_reconhecimento"
-    Product     = "fastlog"
+    Product     = "tcc"
     Environment = "prod"
   }
 }
