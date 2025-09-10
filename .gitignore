@@ -7,7 +7,7 @@ target/
 ### TERRAFORM ###
 .terraform/
 .terraform.lock.hcl
-/terraform.tfvars
+*.tfvars
 *.pem
 
 ### STS ###
@@ -40,5 +40,3 @@ build/
 
 ### SQL
 *.mwb.bak
-terraform/terraform.tfvars
-terraform/terraform.tfvars

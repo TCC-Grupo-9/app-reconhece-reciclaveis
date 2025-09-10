@@ -37,12 +37,17 @@ resource "aws_subnet" "public-tcc-east_1b" {
   availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
 
+  depends_on = [
+    aws_vpc_ipv4_cidr_block_association.vpc-tcc_additional_cidr
+  ]
+
   tags = {
     Name        = "subnet_public-east_1b"
     Product     = "tcc"
     Environment = "prod"
   }
 }
+
 
 resource "aws_internet_gateway" "igw-tcc" {
   vpc_id = aws_vpc.vpc-tcc.id
