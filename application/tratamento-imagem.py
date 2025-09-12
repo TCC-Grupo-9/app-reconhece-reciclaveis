@@ -36,8 +36,8 @@ def lambda_handler(event, context):
 
         return {
             "statusCode": 200,
-            "guid": email,
-            "mensagem": f"Imagem tratada enviada para {bucket_destino}/{nome_arquivo}"
+            "email": email,
+            "destino": f"{bucket_destino}/{nome_arquivo}"
         }
 
     except Exception as e:
