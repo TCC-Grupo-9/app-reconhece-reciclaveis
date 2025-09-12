@@ -1,44 +1,48 @@
 import boto3
 import os
 from PIL import Image
-import tempfile
+from io import BytesIO
 
 s3 = boto3.client("s3")
 
 def lambda_handler(event, context):
-    # 1. Pega informações do arquivo enviado
     bucket_origem = event["Records"][0]["s3"]["bucket"]["name"]
     chave_origem = event["Records"][0]["s3"]["object"]["key"]
-
-    bucket_destino = os.environ["OUTPUT_BUCKET"]
-    chave_destino = f"resized-{os.path.basename(chave_origem)}"
+    bucket_destino = "tcc-tratada-bucket"
 
     try:
-        # 2. Cria pasta temporária
-        with tempfile.TemporaryDirectory() as tmpdir:
-            arquivo_origem = os.path.join(tmpdir, "input_image")
-            arquivo_saida = os.path.join(tmpdir, "output_image.jpg")
+        nome_arquivo = os.path.basename(chave_origem)
+        email = nome_arquivo.split("-")[0]
 
-            # Baixa do S3
-            s3.download_file(bucket_origem, chave_origem, arquivo_origem)
+        extensao = os.path.splitext(nome_arquivo)[1].lower().replace(".", "")
+        formato = "JPEG" if extensao in ["jpg", "jpeg"] else extensao.upper()
 
-            # 3. Abre e redimensiona imagem
-            with Image.open(arquivo_origem) as img:
-                largura = 640
-                proporcao = largura / float(img.width)
-                altura = int(float(img.height) * proporcao)
+        response = s3.get_object(Bucket=bucket_origem, Key=chave_origem)
+        img_bytes = response["Body"].read()
 
-                img = img.resize((largura, altura), Image.Resampling.LANCZOS)
-                img.save(arquivo_saida, optimize=True, quality=85)
+        img = Image.open(BytesIO(img_bytes))
 
-            # 4. Sobe imagem redimensionada para bucket destino
-            s3.upload_file(arquivo_saida, bucket_destino, chave_destino)
+        largura = 640
+        proporcao = largura / float(img.width)
+        altura = int(float(img.height) * proporcao)
+
+        img = img.resize((largura, altura), Image.Resampling.LANCZOS)
+
+        buffer = BytesIO()
+        img.save(buffer, format=formato, optimize=True, quality=85)
+        buffer.seek(0)
+
+        s3.put_object(Bucket=bucket_destino, Key=nome_arquivo, Body=buffer)
 
         return {
             "statusCode": 200,
-            "body": f"Imagem redimensionada enviada para {bucket_destino}/{chave_destino}"
+            "guid": email,
+            "mensagem": f"Imagem tratada enviada para {bucket_destino}/{nome_arquivo}"
         }
 
     except Exception as e:
         print(f"Erro ao processar {chave_origem}: {str(e)}")
-        raise e
+        return {
+            "statusCode": 500,
+            "erro": str(e)
+        }
