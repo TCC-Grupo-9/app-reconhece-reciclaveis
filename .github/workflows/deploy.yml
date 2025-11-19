@@ -27,6 +27,7 @@ jobs:
 
       - name: Construir e enviar imagem
         run: |
+          cd app
           docker build -t uken49/reconhece-lixo:${{ env.IMAGE_VERSION }} -t uken49/reconhece-lixo:latest .
           docker push uken49/reconhece-lixo:${{ env.IMAGE_VERSION }}
           docker push uken49/reconhece-lixo:latest
