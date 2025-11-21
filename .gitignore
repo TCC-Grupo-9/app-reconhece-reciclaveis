@@ -7,8 +7,8 @@ target/
 ### TERRAFORM ###
 .terraform/
 .terraform.lock.hcl
-*.tfvars
-*.pem
+terraform/terraform.tfvars
+terraform/ssh/*
 
 ### STS ###
 .apt_generated

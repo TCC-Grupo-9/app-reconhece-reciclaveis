@@ -51,6 +51,7 @@ jobs:
               --name reconhece-lixo \
               --restart=unless-stopped \
               -p 80:80 \
+              -e BUCKET_RECONHECIDA=${{ secrets.BUCKET_RECONHECIDA }}
               uken49/reconhece-lixo:latest
 
             echo "Deploy concluído!"

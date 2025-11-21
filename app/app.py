@@ -5,16 +5,16 @@ from ultralytics import YOLO
 from PIL import Image
 import io
 import json
+import os
 
 model = YOLO("/app/best.pt")
 
 s3 = boto3.client("s3")
 
-BUCKET = "tcc-bucket-reconhecida"
+BUCKET_RECONHECIDA = os.environ.get("BUCKET_RECONHECIDA")
 
 app = Flask(__name__)
 app.config["PROPAGATE_EXCEPTIONS"] = True
-
 
 def detecta(imagem):
     resultados = model(imagem)
@@ -40,7 +40,7 @@ def detecta(imagem):
 
 
 def envio_s3(buffer, img_name, email, webhook, detectados):
-    print(f"Fazendo upload para S3: s3://{BUCKET}/{img_name}")
+    print(f"Fazendo upload para S3: s3://{BUCKET_RECONHECIDA}/{img_name}")
 
     labels = json.dumps([d["classe"] for d in detectados])
     probs = json.dumps([d["probabilidade"] for d in detectados])
@@ -58,10 +58,10 @@ def envio_s3(buffer, img_name, email, webhook, detectados):
 
     s3.upload_fileobj(
         buffer,
-        BUCKET,
+        BUCKET_RECONHECIDA,
         img_name,
         ExtraArgs={
-            "ContentType": "image/jpeg",
+            "ContentType": "image/jpg",
             "Metadata": metadata
         }
     )
@@ -72,7 +72,7 @@ def envio_s3(buffer, img_name, email, webhook, detectados):
 
 @app.route("/api/reconhece/v1", methods=["POST"])
 def reconhece():
-    email = request.args.get("email")
+    email = request.args.get("email") or ""
     webhook = request.args.get("webhook")
     img_file = request.files["imagem"]
 
@@ -84,7 +84,7 @@ def reconhece():
     detectados, pil_result = detecta(pil_img)
 
     buffer = io.BytesIO()
-    pil_result.save(buffer, format="JPEG")
+    pil_result.save(buffer, format="JPG")
     buffer.seek(0)
 
     envio_s3(buffer, img_name, email, webhook, detectados)
