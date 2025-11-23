@@ -42,12 +42,8 @@ def detecta(imagem):
 def envio_s3(buffer, img_name, email, webhook, detectados):
     print(f"Fazendo upload para S3: s3://{BUCKET}/{img_name}")
 
-    labels = json.dumps([d["classe"] for d in detectados])
-    probs = json.dumps([d["probabilidade"] for d in detectados])
-
     metadata = {
-        "classes": labels,
-        "probabilidades": probs
+        "detectados": json.dumps(detectados)
     }
 
     if email:
@@ -67,8 +63,6 @@ def envio_s3(buffer, img_name, email, webhook, detectados):
     )
 
     print("Upload concluído")
-
-
 
 @app.route("/api/reconhece/v1", methods=["POST"])
 def reconhece():
@@ -90,7 +84,7 @@ def reconhece():
     envio_s3(buffer, img_name, email, webhook, detectados)
 
     return jsonify({
-        "objetos_detectados": detectados
+        detectados
     })
 
 

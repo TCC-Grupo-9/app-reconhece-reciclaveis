@@ -1,12 +1,16 @@
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 # S3 Bucket
 resource "aws_s3_bucket" "s3-original" {
-  bucket = "tcc-bucket-original"
+  bucket = "imagem-original-${random_id.suffix.hex}"
 }
 
 resource "aws_s3_bucket" "s3-tratada" {
-  bucket = "tcc-bucket-tratada"
+  bucket = "imagem-tratada-${random_id.suffix.hex}"
 }
 
 resource "aws_s3_bucket" "s3-reconhecida" {
-  bucket = "tcc-bucket-reconhecida"
+  bucket = "imagem-reconhecida-${random_id.suffix.hex}"
 }

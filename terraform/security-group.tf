@@ -1,5 +1,5 @@
-resource "aws_security_group" "conexao_backend" {
-  name_prefix = "conexao_backend"
+resource "aws_security_group" "sg-backend" {
+  name_prefix = "sg_backend"
   vpc_id = aws_vpc.vpc-tcc.id
 
   ingress {
@@ -9,9 +9,23 @@ resource "aws_security_group" "conexao_backend" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   
-   ingress {
+  ingress {
     from_port   = 5432
     to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -24,7 +38,32 @@ resource "aws_security_group" "conexao_backend" {
   }
   
   tags = {
-    Name = "sg-conexao_backend"
+    Name = "sg-backend"
+    Product = "tcc"
+    Environment = "prod"
+  }
+}
+
+resource "aws_security_group" "sg-lambda" {
+  name_prefix = "sg_lambda"
+  vpc_id = aws_vpc.vpc-tcc.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = []
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  tags = {
+    Name = "sg-lambda"
     Product = "tcc"
     Environment = "prod"
   }
