@@ -1,3 +1,7 @@
+resource "random_id" "suffix" {
+  byte_length = 4
+}
+
 # S3 Bucket
 resource "aws_s3_bucket" "s3-original" {
   bucket = "imagem-original-${random_id.suffix.hex}"

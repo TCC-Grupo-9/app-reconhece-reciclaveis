@@ -1,5 +1,5 @@
 resource "aws_security_group" "sg-backend" {
-  name_prefix = "sg-backend"
+  name_prefix = "sg_backend"
   vpc_id = aws_vpc.vpc-tcc.id
 
   ingress {
@@ -19,21 +19,14 @@ resource "aws_security_group" "sg-backend" {
   ingress {
     from_port   = 80
     to_port     = 80
-    protocol    = "http"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 443
     to_port     = 443
-    protocol    = "https"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -52,7 +45,7 @@ resource "aws_security_group" "sg-backend" {
 }
 
 resource "aws_security_group" "sg-lambda" {
-  name_prefix = "sg-lambda"
+  name_prefix = "sg_lambda"
   vpc_id = aws_vpc.vpc-tcc.id
 
   ingress {

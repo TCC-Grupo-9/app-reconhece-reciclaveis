@@ -3,8 +3,12 @@ resource "aws_lb" "lb-tcc" {
   name               = "alb-tcc"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.conexao_backend.id]
-  subnets            = [
+
+  security_groups = [
+    aws_security_group.sg-backend.id
+  ]
+
+  subnets = [
     aws_subnet.public-tcc-east_1a.id,
     aws_subnet.public-tcc-east_1b.id
   ]

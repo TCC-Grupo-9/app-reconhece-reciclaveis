@@ -11,8 +11,11 @@ def lambda_handler(event, context):
     try:
         bucket = event["Records"][0]["s3"]["bucket"]["name"]
         key = event["Records"][0]["s3"]["object"]["key"]
+        print("Bucket:", bucket)
+        print("Key:", key)
 
         response = s3.get_object(Bucket=bucket, Key=key)
+        print("Response:", response)
         imagem_bytes = response["Body"].read()
 
         metadata = response.get("Metadata", {})
@@ -33,6 +36,10 @@ def lambda_handler(event, context):
         ecs_response = requests.post(
             ENDPOINT_MODELO,
             data=data,
+            params={
+                "email": email,
+                "webhook": webhook
+            },
             files=files,
             timeout=30
         )

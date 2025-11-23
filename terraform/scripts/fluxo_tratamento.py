@@ -5,7 +5,7 @@ from PIL import Image
 
 s3 = boto3.client("s3")
 
-BUCKET_ORIGINAL = os.environ.get("BUCKET_ORIGINAL")  
+BUCKET_ORIGINAL = os.environ.get("BUCKET_ORIGINAL")
 
 def lambda_handler(event, context):
     bucket_origem = event["Records"][0]["s3"]["bucket"]["name"]
@@ -21,6 +21,8 @@ def lambda_handler(event, context):
         webhook = metadata.get("webhook") or ""
 
         img_bytes = response["Body"].read()
+        print(f"Tamanho da imagem: {len(img_bytes)} bytes")
+
         img = Image.open(BytesIO(img_bytes))
 
         largura = 640
@@ -55,4 +57,4 @@ def lambda_handler(event, context):
         return {
             "statusCode": 500,
             "erro": str(e)
-        }
+        }   
