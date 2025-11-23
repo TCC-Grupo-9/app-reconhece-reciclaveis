@@ -20,7 +20,6 @@ resource "aws_lambda_function" "lambda-fluxo_tratamento" {
     memory_size = 1024
     timeout     = 10
 
-
     layers = [
         "arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p312-boto3:22",
         "arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p312-Pillow:7"
@@ -47,7 +46,7 @@ resource "aws_lambda_function" "lambda-trigger_envio_modelo" {
         "arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p312-boto3:22",
         "arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p312-requests:17"
     ]
-    
+
     environment {
         variables = {
             ENDPOINT_MODELO = "http://${aws_instance.ec2-reconhece_lixo.private_ip}:80/api/reconhece/v1"
@@ -69,17 +68,5 @@ resource "aws_lambda_permission" "allow_s3_tratada" {
     function_name = aws_lambda_function.lambda-trigger_envio_modelo.function_name
     principal     = "s3.amazonaws.com"
     source_arn    = aws_s3_bucket.s3-tratada.arn
-}
 
-resource "aws_s3_bucket_notification" "lambda_upload_image_notification" {
-    bucket = aws_s3_bucket.s3-original.id
-
-    lambda_function {
-        lambda_function_arn = aws_lambda_function.lambda-fluxo_tratamento.arn
-        events              = ["s3:ObjectCreated:Put"]
-    }
-
-    depends_on = [
-        aws_lambda_permission.allow_s3_original
-    ]
 }

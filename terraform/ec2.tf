@@ -25,7 +25,7 @@ resource "aws_instance" "ec2-reconhece_lixo" {
     subnet_id              = aws_subnet.public-tcc-east_1a.id
     vpc_security_group_ids = [aws_security_group.sg-backend.id]
     key_name               = aws_key_pair.tcc_key.key_name
-    
+
     user_data = templatefile("scripts/startup-reconhece_lixo.sh", {
         BUCKET_RECONHECIDA = aws_s3_bucket.s3-reconhecida.bucket
     })
@@ -34,7 +34,7 @@ resource "aws_instance" "ec2-reconhece_lixo" {
         volume_size = 16
         volume_type = "gp3"
     }
-
+    
     tags = {
         Name        = "reconhece-lixo"
         Product     = "tcc"
@@ -48,6 +48,7 @@ resource "aws_instance" "ec2-tcc_gateway" {
     subnet_id              = aws_subnet.public-tcc-east_1b.id
     vpc_security_group_ids = [aws_security_group.sg-backend.id]
     key_name               = aws_key_pair.tcc_key.key_name
+
 
     user_data = templatefile("scripts/startup-tcc_gateway.sh", {
         BUCKET_ORIGINAL = aws_s3_bucket.s3-original.bucket

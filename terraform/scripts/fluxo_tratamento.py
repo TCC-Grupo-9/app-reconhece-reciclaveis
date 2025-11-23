@@ -21,6 +21,8 @@ def lambda_handler(event, context):
         webhook = metadata.get("webhook") or ""
 
         img_bytes = response["Body"].read()
+        print(f"Tamanho da imagem: {len(img_bytes)} bytes")
+
         img = Image.open(BytesIO(img_bytes))
 
         largura = 640
@@ -55,4 +57,4 @@ def lambda_handler(event, context):
         return {
             "statusCode": 500,
             "erro": str(e)
-        }
+        }   
