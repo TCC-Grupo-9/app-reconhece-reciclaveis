@@ -10,7 +10,6 @@ import os
 model = YOLO("/app/best.pt")
 
 s3 = boto3.client("s3")
-
 BUCKET_RECONHECIDA = os.environ.get("BUCKET_RECONHECIDA")
 
 app = Flask(__name__)
@@ -42,16 +41,12 @@ def detecta(imagem):
 def envio_s3(buffer, img_name, email, webhook, detectados):
     print(f"Fazendo upload para S3: s3://{BUCKET_RECONHECIDA}/{img_name}")
 
-    labels = json.dumps([d["classe"] for d in detectados])
-    probs = json.dumps([d["probabilidade"] for d in detectados])
-
     metadata = {
-        "detectados": detectados
+        "detectados": json.dumps(detectados)
     }
 
     if email:
         metadata["email"] = email
-
     if webhook:
         metadata["webhook"] = webhook
 
@@ -68,11 +63,14 @@ def envio_s3(buffer, img_name, email, webhook, detectados):
     print("Upload concluído")
 
 
-
 @app.route("/api/reconhece/v1", methods=["POST"])
 def reconhece():
     email = request.args.get("email") or ""
     webhook = request.args.get("webhook") or ""
+
+    if "imagem" not in request.files:
+        return jsonify({"erro": "Envie uma imagem no form-data"}), 400
+
     img_file = request.files["imagem"]
 
     img_name = img_file.filename
@@ -88,9 +86,7 @@ def reconhece():
 
     envio_s3(buffer, img_name, email, webhook, detectados)
 
-    return jsonify({
-        detectados
-    })
+    return jsonify({"detectados": detectados})
 
 
 if __name__ == "__main__":

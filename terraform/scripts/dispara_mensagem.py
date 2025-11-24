@@ -3,10 +3,10 @@ import json
 import os
 import requests
 
-TOPICO_SNS = os.environ.get("TOPICO_SNS")
+# TOPICO_SNS = os.environ.get("TOPICO_SNS")
 BUCKET_RECONHECIDA = os.environ.get("BUCKET_RECONHECIDA")
 s3 = boto3.client("s3")
-sns = boto3.client("sns")
+# sns = boto3.client("sns")
 
 def gerar_presigned_url(bucket, key):
     url = s3.generate_presigned_url(
@@ -27,7 +27,8 @@ def lambda_handler(event, context):
 
         email = metadata.get("email") or ""
         webhook = metadata.get("webhook") or ""
-        detectados = metadata.get("detectados", "")
+        detectados_raw = metadata.get("detectados", "[]")
+        detectados = json.loads(detectados_raw)
 
         url_imagem = gerar_presigned_url(BUCKET_RECONHECIDA, nome_arquivo)
 
